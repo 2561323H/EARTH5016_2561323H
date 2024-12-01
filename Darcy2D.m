@@ -106,7 +106,7 @@ while t <= tend
 
         % get p-dependent segregation mobility
         KD  = KD0 + cp.*max(0,p).^mp;
-        KDx = (KD0(ix3:,(1:end-1)) + KD0(ix3:,(2:end)));  % on x-faces
+        KDx = (KD0(ix3:(1:end-1)) + KD0(ix3:(2:end)));  % on x-faces
         KDz = (KD0(iz3(1:end-1),:) + KD0(iz3(2:end),:));  % on z-faces
 
         % get Darcy flux (vD = - KD (Grad(p) - D(rho) g)
@@ -282,7 +282,7 @@ dTdt = - (div_qx + diz_qz);
 
 end
 
-end
+
 
 
 % Function to calculate 5th order WENO polynomials from Jiang & Shu, 1996, J Comp Physics
