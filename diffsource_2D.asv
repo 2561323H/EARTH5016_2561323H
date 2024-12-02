@@ -53,8 +53,8 @@ end
 function [dTdt] = diffusion(dTdz,k0,h, ix, iz)
 
 % calculate heat flux by diffusion
-qx = - diff(k0(:,ix)) .* diff(f(:,ix))/h;
-qz = - diff(k0(iz,:)) .* diff(f(iz,: ))/h;
+qx = - diff(k0(:,ix)) .* diff((:,ix))/h;
+qz = - diff(k0(iz,:)) .* diff((iz,: ))/h;
 
 
 
