@@ -59,25 +59,11 @@ while t <= tend
             T_vals = [T_vals,sum(T(:))];
             %rCV_vals = [rCV_vals,rCV];
            
-    %plot model progress every 'nop' time steps
-   % if ~mod(tau,nop)
-   %     makefig(xc,zc,T,t,yr);
-   % end
+
 
    
 end
 
-
-%*****  calculate numerical error norm
-%Errx = norm(T - Ta,1)./norm(Ta,2);
-%disp(' ');
-%disp(['Numerical error = ',num2str(Errx)]);
-%disp(' ');
-%
-%Errz = norm(T - Ta,1)./norm(Ta,1);
-%disp(' ');
-%disp(['Numerical error = ',num2str(Errz)]);
-%disp(' ');
 
 %*****  Utility Functions  ************************************************
 
@@ -114,22 +100,3 @@ ylabel('Energy [J]','FontSize',18, 'FontName','Times New Roman');
 title('Total Thermal Energy','FontSize',20, 'FontName','Times New Roman');
 grid on;
 
-
-
-% Function to make output figure
-%function makefig(x,z,T,t,yr)
-%
-%clf; 
-%
-%%plot temperature
-%imagesc(x,z,T); axis equal tight; colorbar; hold on
-%ylabel('z [m]','FontSize',18, 'FontName','Times New Roman')
-%xlabel('x [m]','FontSize',18, 'FontName','Times New Roman')
-%ylabel(colorbar,'Temperature [°C]','FontSize',18, 'FontName','Times New Roman')
-%title(['Temperature; time = ',num2str(t/yr),' yr'],'FontSize',20, 'FontName','Times New Roman')
-%[C,h] = contour(x,z,T, [50,100,150], 'r', 'Linewidth', 2);
-%clabel(C,h,'Fontsize',18,'Color','r', 'FontName','Times New Roman');
-%
-%drawnow;
-%
-%end
