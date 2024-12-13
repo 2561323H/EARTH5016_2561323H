@@ -11,7 +11,7 @@ clear all; close all; %clc;
 
 % load model setup from image, interpolate to target grid size
 W       = 16e3;     % domain width (must correspond to width of image) [m]
-Nx      = 400;      % target no. of columns in x-direction
+Nx      = 200;      % target no. of columns in x-direction
 h       = W/Nx;     % grid spacing based on image width and target grid size
 n_units = 9;        % number of rock units contained in image
 test = 'no';
@@ -37,7 +37,7 @@ matprop = [
           6	    0.924	        2081.7	    860	        1.43e-6               0.55           % Clay, mudstone
           7	    1.67	        1916	    910	        1.3e-6                17         % Silt
           8	    0.919	        1909.78	    740	        1.2e-6                21.2        % Mud, silt, sand
-          9	    1e-6            1000   	    1000	    0                     100];           % air/water
+          9	    1e-6            1   	    1000	    0                     100];           % air/water
         
 
 switch test 
@@ -49,27 +49,24 @@ switch test
         
         rho    = reshape(matprop(units,3),Nz,Nx); % density
         Cp     = reshape(matprop(units,4),Nz,Nx); % specific heat capacity
-        sigma     = reshape(matprop(units,2),Nz,Nx); % conductivity
+        kT     = reshape(matprop(units,2),Nz,Nx); % conductivity
         Hr     = reshape(matprop(units,5),Nz,Nx); % heat rate
         
-        %rho = (1-phi).*rho + phi.*1000;
-        %Cp = (1-phi).*Cp + phi.*1000;
-        %sigma = (1-phi).*sigma + phi.*1e-6;
-        %Hr = (1-phi).*Hr;
+        
 
         % calculate heat diffusivity [m2/s]
-        k0 = sigma ./ rho ./ Cp;
+        k0 = kT ./ rho ./ Cp;
 
     case 'yes'
 
         rho    = 2400*ones(Nz,Nx); % density
         Cp     = 1000*ones(Nz,Nx); % specific heat capacity
-        sigma     = ones(Nz,Nx); % conductivity
+        kT     = ones(Nz,Nx); % conductivity
         Hr     = ones(Nz,Nx); % heat rate
 
         % calculate heat diffusivity [m2/s]
-        k0 = sigma ./ rho ./ Cp;
-
+        k0 = kT ./ rho ./ Cp;
+        
 
 end
 
@@ -77,11 +74,12 @@ end
 dTdz = [0, 35/1000];  % set boundary condition
 T0  = 10;              % surface temperature degree C
 Tair = 10;             % air temperature degree C
-nop   = 100;          % output figure produced every 'nop' steps
+nop   = 5000;          % output figure produced every 'nop' steps
 wT   = 10;         % initial temperature peak width [m]
 yr    = 3600*24*365;  % seconds per year [s]
-tend  = 1e6*yr;       % stopping time [s]
+tend  = 1e6 *yr;       % stopping time [s]
 CFL   = 1/5;         % Time step limiter
 
 %*****  RUN MODEL
-run('./diffsource_test.m');
+run('./diffsource_test_energy.m');
+

@@ -28,6 +28,11 @@ t = 0;  % initial time [s]
 tau = 0;  % initial time step count
 dt = CFL * (h/2)^2/max(k0, [], 'all');
 
+t_vals = [];  % array for time
+E_vals = [];  % array for energy
+T_vals = [];
+rCV_vals = [];
+
 while t <= tend
 
     % increment time and step count
@@ -35,7 +40,7 @@ while t <= tend
     tau = tau+1;
 
     % reset air section
-    T(air) = Tair;
+    %T(air) = Tair;
 
             % 4th-order Runge-Kutta time integration scheme
                     
@@ -44,27 +49,35 @@ while t <= tend
             dTdt3 = diffusion(T+dTdt2/2*dt, dTdz,k0,h,ix,iz);
             dTdt4 = diffusion(T+dTdt3  *dt, dTdz,k0,h,ix,iz);
         
-            T = T + (dTdt1 + 2*dTdt2 + 2*dTdt3 + dTdt4)/6 * dt + (Hr ./ rho ./ Cp);
-
+            T = T + (dTdt1 + 2*dTdt2 + 2*dTdt3 + dTdt4)/6 * dt;
+     
+            % Calculate E
+            rCV = sum(rho(:) .* Cp(:) * h*h);
+            E = sum(T(:)) * rCV; 
+            E_vals = [E_vals, E];  
+            t_vals = [t_vals, t]; 
+            T_vals = [T_vals,sum(T(:))];
+            %rCV_vals = [rCV_vals,rCV];
+           
     %plot model progress every 'nop' time steps
-    if ~mod(tau,nop)
-        makefig(xc,zc,T,t,yr);
-    end
+   % if ~mod(tau,nop)
+   %     makefig(xc,zc,T,t,yr);
+   % end
 
    
 end
 
 
 %*****  calculate numerical error norm
-Errx = norm(T - Ta,1)./norm(Ta,2);
-disp(' ');
-disp(['Numerical error = ',num2str(Errx)]);
-disp(' ');
-
-Errz = norm(T - Ta,1)./norm(Ta,1);
-disp(' ');
-disp(['Numerical error = ',num2str(Errz)]);
-disp(' ');
+%Errx = norm(T - Ta,1)./norm(Ta,2);
+%disp(' ');
+%disp(['Numerical error = ',num2str(Errx)]);
+%disp(' ');
+%
+%Errz = norm(T - Ta,1)./norm(Ta,1);
+%disp(' ');
+%disp(['Numerical error = ',num2str(Errz)]);
+%disp(' ');
 
 %*****  Utility Functions  ************************************************
 
@@ -80,27 +93,43 @@ qx = - kx .* diff(f(:, ix), 1, 2)/h;
 qz = - kz .* diff(f(iz, :), 1, 1)/h;
 
 % set boundary conditions
-qz(end, :) = -kz(end, :) .* dTdz(2);
+qz(end, :) = -kz(end, :) .* dTdz(1);
+
+qx(:,1) = 0;  % no heat flux at the left boundary
+qx(:,end) = 0;  % no heat flux at the right boundary
+qz(1,:) = 0;  % no heat flux at the top boundary
+qz(end,:) = 0;  % no heat flux at the bottom boundary
 
 % calculate flux balance for rate of change
 dTdt = -(diff(qx, 1, 2)/h + diff(qz, 1, 1)/h);
 
 end
 
+
+plot(t_vals/yr,E_vals,'m','Linewidth', 2);   
+xlim([min(t_vals)/yr max(t_vals)/yr]);
+ylim([1e19 6e20]);
+xlabel('Time [yr]','FontSize',18, 'FontName','Times New Roman');
+ylabel('Energy [J]','FontSize',18, 'FontName','Times New Roman');
+title('Total Thermal Energy','FontSize',20, 'FontName','Times New Roman');
+grid on;
+
+
+
 % Function to make output figure
-function makefig(x,z,T,t,yr)
-
-clf; 
-
-%plot temperature
-imagesc(x,z,T); axis equal tight; colorbar; hold on
-ylabel('z [m]','FontSize',18, 'FontName','Times New Roman')
-xlabel('x [m]','FontSize',18, 'FontName','Times New Roman')
-ylabel(colorbar,'Temperature [°C]','FontSize',18, 'FontName','Times New Roman')
-title(['Temperature; time = ',num2str(t/yr),' yr'],'FontSize',20, 'FontName','Times New Roman')
-[C,h] = contour(x,z,T, [50,100,150], 'k');
-clabel(C,h,'Fontsize',18,'Color','r', 'FontName','Times New Roman');
-
-drawnow;
-
-end
+%function makefig(x,z,T,t,yr)
+%
+%clf; 
+%
+%%plot temperature
+%imagesc(x,z,T); axis equal tight; colorbar; hold on
+%ylabel('z [m]','FontSize',18, 'FontName','Times New Roman')
+%xlabel('x [m]','FontSize',18, 'FontName','Times New Roman')
+%ylabel(colorbar,'Temperature [°C]','FontSize',18, 'FontName','Times New Roman')
+%title(['Temperature; time = ',num2str(t/yr),' yr'],'FontSize',20, 'FontName','Times New Roman')
+%[C,h] = contour(x,z,T, [50,100,150], 'r', 'Linewidth', 2);
+%clabel(C,h,'Fontsize',18,'Color','r', 'FontName','Times New Roman');
+%
+%drawnow;
+%
+%end
