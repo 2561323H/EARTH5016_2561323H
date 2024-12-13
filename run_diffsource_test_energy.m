@@ -3,11 +3,6 @@
 % clear workspace
 clear all; close all; %clc;
 
-%NN = [100,200,400];
-
-
-%for nn = 1:3 
-
 
 % load model setup from image, interpolate to target grid size
 W       = 16e3;     % domain width (must correspond to width of image) [m]
@@ -16,10 +11,6 @@ h       = W/Nx;     % grid spacing based on image width and target grid size
 n_units = 9;        % number of rock units contained in image
 test = 'no';
 
-
-% units = value of each pixel (colour)
-% D = original depth
-% Nz = target no. of rows in z-direction
 
 [units,D,Nz] = ModelFromImage('section.tiff',n_units,W,Nx);
 
@@ -59,7 +50,7 @@ switch test
 
     case 'yes'
 
-        rho    = 2400*ones(Nz,Nx); % density
+        rho    = 2400*ones(Nz,Nx); % density                   % ChatGPT was used to calculate porosities
         Cp     = 1000*ones(Nz,Nx); % specific heat capacity
         kT     = ones(Nz,Nx); % conductivity
         Hr     = ones(Nz,Nx); % heat rate
