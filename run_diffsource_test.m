@@ -3,11 +3,6 @@
 % clear workspace
 clear all; close all; %clc;
 
-%NN = [100,200,400];
-
-
-%for nn = 1:3 
-
 
 % load model setup from image, interpolate to target grid size
 W       = 16e3;     % domain width (must correspond to width of image) [m]
@@ -52,9 +47,9 @@ switch test
         sigma     = reshape(matprop(units,2),Nz,Nx); % conductivity
         Hr     = reshape(matprop(units,5),Nz,Nx); % heat rate
         
-        %rho = (1-phi).*rho + phi.*1000;
+        %rho = (1-phi).*rho + phi.*1000;             %ChatGPT was used to calculate porosities
         %Cp = (1-phi).*Cp + phi.*1000;
-        %sigma = (1-phi).*sigma + phi.*1e-6;
+        %sigma = (1-phi).*sigma + phi.*1e-6;     
         %Hr = (1-phi).*Hr;
 
         % calculate heat diffusivity [m2/s]
